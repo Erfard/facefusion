@@ -2,22 +2,31 @@ from typing import Any, Dict, Optional
 
 WORDING : Dict[str, Any] =\
 {
+	'conda_not_activated': 'Conda is not activated',
 	'python_not_supported': 'Python version is not supported, upgrade to {version} or higher',
 	'ffmpeg_not_installed': 'FFMpeg is not installed',
 	'creating_temp': 'Creating temporary resources',
-	'extracting_frames_fps': 'Extracting frames with {video_fps} FPS',
+	'extracting_frames': 'Extracting frames with a resolution of {resolution} and {fps} frames per second',
+	'extracting_frames_succeed': 'Extracting frames succeed',
+	'extracting_frames_failed': 'Extracting frames failed',
 	'analysing': 'Analysing',
 	'processing': 'Processing',
 	'downloading': 'Downloading',
 	'temp_frames_not_found': 'Temporary frames not found',
-	'compressing_image_succeed': 'Compressing image succeed',
-	'compressing_image_skipped': 'Compressing image skipped',
-	'merging_video_fps': 'Merging video with {video_fps} FPS',
+	'copying_image': 'Copying image with a resolution of {resolution}',
+	'copying_image_succeed': 'Copying image succeed',
+	'copying_image_failed': 'Copying image failed',
+	'finalizing_image': 'Finalizing image with a resolution of {resolution}',
+	'finalizing_image_succeed': 'Finalizing image succeed',
+	'finalizing_image_skipped': 'Finalizing image skipped',
+	'merging_video': 'Merging video with a resolution of {resolution} and {fps} frames per second',
+	'merging_video_succeed': 'Merging video succeed',
 	'merging_video_failed': 'Merging video failed',
 	'skipping_audio': 'Skipping audio',
 	'restoring_audio_succeed': 'Restoring audio succeed',
 	'restoring_audio_skipped': 'Restoring audio skipped',
 	'clearing_temp': 'Clearing temporary resources',
+	'processing_stopped': 'Processing stopped',
 	'processing_image_succeed': 'Processing to image succeed in {seconds} seconds',
 	'processing_image_failed': 'Processing to image failed',
 	'processing_video_succeed': 'Processing to video succeed in {seconds} seconds',
@@ -44,31 +53,35 @@ WORDING : Dict[str, Any] =\
 	{
 		# installer
 		'install_dependency': 'select the variant of {dependency} to install',
-		'skip_venv': 'skip the virtual environment check',
+		'skip_conda': 'skip the conda environment check',
 		# general
+		'config': 'choose the config file to override defaults',
 		'source': 'choose single or multiple source images or audios',
 		'target': 'choose single target image or video',
 		'output': 'specify the output file or directory',
 		# misc
+		'force_download': 'force automate downloads and exit',
 		'skip_download': 'omit automate downloads and remote lookups',
 		'headless': 'run the program without a user interface',
 		'log_level': 'adjust the message severity displayed in the terminal',
 		# execution
+		'execution_device_id': 'specify the device used for processing',
 		'execution_providers': 'accelerate the model inference using different providers (choices: {choices}, ...)',
 		'execution_thread_count': 'specify the amount of parallel threads while processing',
 		'execution_queue_count': 'specify the amount of frames each thread is processing',
 		# memory
-		'video_memory_strategy': 'balance fast frame processing and low vram usage',
-		'system_memory_limit': 'limit the available ram that can be used while processing',
+		'video_memory_strategy': 'balance fast frame processing and low VRAM usage',
+		'system_memory_limit': 'limit the available RAM that can be used while processing',
 		# face analyser
-		'face_analyser_order': 'specify the order in which the face analyser detects faces.',
+		'face_analyser_order': 'specify the order in which the face analyser detects faces',
 		'face_analyser_age': 'filter the detected faces based on their age',
 		'face_analyser_gender': 'filter the detected faces based on their gender',
 		'face_detector_model': 'choose the model responsible for detecting the face',
 		'face_detector_size': 'specify the size of the frame provided to the face detector',
 		'face_detector_score': 'filter the detected faces base on the confidence score',
+		'face_landmarker_score': 'filter the detected landmarks base on the confidence score',
 		# face selector
-		'face_selector_mode': 'use reference based tracking with simple matching',
+		'face_selector_mode': 'use reference based tracking or simple matching',
 		'reference_face_position': 'specify the position used to create the reference face',
 		'reference_face_distance': 'specify the desired similarity between the reference face and target face',
 		'reference_frame_number': 'specify the frame used to create the reference face',
@@ -81,10 +94,10 @@ WORDING : Dict[str, Any] =\
 		'trim_frame_start': 'specify the the start frame of the target video',
 		'trim_frame_end': 'specify the the end frame of the target video',
 		'temp_frame_format': 'specify the temporary resources format',
-		'temp_frame_quality': 'specify the temporary resources quality',
 		'keep_temp': 'keep the temporary resources after processing',
 		# output creation
 		'output_image_quality': 'specify the image quality which translates to the compression factor',
+		'output_image_resolution': 'specify the image output resolution based on the target image',
 		'output_video_encoder': 'specify the encoder use for the video compression',
 		'output_video_preset': 'balance fast video processing and video file size',
 		'output_video_quality': 'specify the video quality which translates to the compression factor',
@@ -97,10 +110,14 @@ WORDING : Dict[str, Any] =\
 		'face_enhancer_model': 'choose the model responsible for enhancing the face',
 		'face_enhancer_blend': 'blend the enhanced into the previous face',
 		'face_swapper_model': 'choose the model responsible for swapping the face',
+		'frame_colorizer_model': 'choose the model responsible for colorizing the frame',
+		'frame_colorizer_blend': 'blend the colorized into the previous frame',
+		'frame_colorizer_size': 'specify the size of the frame provided to the frame colorizer',
 		'frame_enhancer_model': 'choose the model responsible for enhancing the frame',
 		'frame_enhancer_blend': 'blend the enhanced into the previous frame',
 		'lip_syncer_model': 'choose the model responsible for syncing the lips',
 		# uis
+		'open_browser': 'open the browser once the program is ready',
 		'ui_layouts': 'launch a single or multiple UI layouts (choices: {choices}, ...)'
 	},
 	'uis':
@@ -131,6 +148,7 @@ WORDING : Dict[str, Any] =\
 		'face_detector_model_dropdown': 'FACE DETECTOR MODEL',
 		'face_detector_size_dropdown': 'FACE DETECTOR SIZE',
 		'face_detector_score_slider': 'FACE DETECTOR SCORE',
+		'face_landmarker_score_slider': 'FACE LANDMARKER SCORE',
 		# face masker
 		'face_mask_types_checkbox_group': 'FACE MASK TYPES',
 		'face_mask_blur_slider': 'FACE MASK BLUR',
@@ -150,6 +168,9 @@ WORDING : Dict[str, Any] =\
 		'face_enhancer_model_dropdown': 'FACE ENHANCER MODEL',
 		'face_enhancer_blend_slider': 'FACE ENHANCER BLEND',
 		'face_swapper_model_dropdown': 'FACE SWAPPER MODEL',
+		'frame_colorizer_model_dropdown': 'FRAME COLORIZER MODEL',
+		'frame_colorizer_blend_slider': 'FRAME COLORIZER BLEND',
+		'frame_colorizer_size_dropdown': 'FRAME COLORIZER SIZE',
 		'frame_enhancer_model_dropdown': 'FRAME ENHANCER MODEL',
 		'frame_enhancer_blend_slider': 'FRAME ENHANCER BLEND',
 		'lip_syncer_model_dropdown': 'LIP SYNCER MODEL',
@@ -161,6 +182,7 @@ WORDING : Dict[str, Any] =\
 		# output options
 		'output_path_textbox': 'OUTPUT PATH',
 		'output_image_quality_slider': 'OUTPUT IMAGE QUALITY',
+		'output_image_resolution_dropdown': 'OUTPUT IMAGE RESOLUTION',
 		'output_video_encoder_dropdown': 'OUTPUT VIDEO ENCODER',
 		'output_video_preset_dropdown': 'OUTPUT VIDEO PRESET',
 		'output_video_quality_slider': 'OUTPUT VIDEO QUALITY',
@@ -175,7 +197,6 @@ WORDING : Dict[str, Any] =\
 		'target_file': 'TARGET',
 		# temp frame
 		'temp_frame_format_dropdown': 'TEMP FRAME FORMAT',
-		'temp_frame_quality_slider': 'TEMP FRAME QUALITY',
 		# trim frame
 		'trim_frame_start_slider': 'TRIM FRAME START',
 		'trim_frame_end_slider': 'TRIM FRAME END',
